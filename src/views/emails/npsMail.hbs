@@ -1,0 +1,76 @@
+<style>
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .answers {
+    box-sizing: border-box;
+    padding: 1rem;
+    border : 1px solid #ccc;
+    border-radius: .5rem;
+    margin-top: 1rem;
+    width: auto;
+    flex: 1 0 auto;
+  }
+
+  .scale {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  .values {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .value {
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: .5rem;
+    text-decoration: none;
+    color: white;
+    background-color: #5f3991;
+    margin-right: 1rem;
+  }
+</style>
+
+<div class="container">
+  <div>Olá <strong>{{ name }}!</strong> tudo bem?</div>
+
+  <h1>{{ title }}</h1>
+  </br>
+  <strong>{{ description }}</strong>
+
+
+  <div class="answers">
+    <div class="scale">
+      <span>Ruim</span>
+      <span>Bom</span>
+    </div>
+    <div class="values">
+      <a class="value" href="{{ href }}/1?u={{ user_id }}">1</a>
+      <a class="value" href="{{ href }}/2?u={{ user_id }}">2</a>
+      <a class="value" href="{{ href }}/3?u={{ user_id }}">3</a>
+      <a class="value" href="{{ href }}/4?u={{ user_id }}">4</a>
+      <a class="value" href="{{ href }}/5?u={{ user_id }}">5</a>
+      <a class="value" href="{{ href }}/6?u={{ user_id }}">6</a>
+      <a class="value" href="{{ href }}/7?u={{ user_id }}">7</a>
+      <a class="value" href="{{ href }}/8?u={{ user_id }}">8</a>
+      <a class="value" href="{{ href }}/9?u={{ user_id }}">9</a>
+      <a class="value" href="{{ href }}/10?u={{ user_id }}">10</a>
+    </div>
+  </div>
+
+
+  </br>
+  </br>
+  <strong>Sua opinião é muito importante para nós</strong>
+  <h3>Equipe | <strong>NLW</strong></h3>
+</div>
