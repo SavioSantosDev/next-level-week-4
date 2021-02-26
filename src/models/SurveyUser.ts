@@ -7,27 +7,27 @@ import { User } from "./User";
 export class SurveyUser {
 
   @PrimaryColumn()
-  readonly id?: string;
+  readonly id!: string;
 
   @Column()
-  user_id?: string;
+  user_id!: string;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user?: User;
+  user!: User;
 
   @Column()
-  survey_id?: string;
+  survey_id!: string;
 
   @ManyToOne(() => Survey)
   @JoinColumn({ name: 'survey_id' })
-  survey?: Survey;
+  survey!: Survey;
 
   @Column()
-  value?: number;
+  value!: number;
 
   @CreateDateColumn()
-  created_at?: Date;
+  created_at!: Date;
 
 
   constructor() {

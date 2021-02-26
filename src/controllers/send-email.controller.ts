@@ -6,6 +6,7 @@ import SurveyRepository from '../repositories/SurveyRepository';
 import { SurveysUsersRepository } from '../repositories/SurveysUsers.repository';
 import UsersRepository from '../repositories/UsersRepository';
 import SendEmailService from './../services/send-email.service';
+import AppError from '../errors/app.error';
 
 
 export class SendEmailController {
@@ -22,14 +23,23 @@ export class SendEmailController {
       // Checks whether the users exisits
       const user = await userRepository.findOne({ email });
       if (!user) {
-        return res.status(400).json({ error: 'User does not exists!' });
+        throw new AppError('User does not exists!', 400);
       }
 
       // Checks whether the survey exist in the table
       const survey = await surveyRepository.findOne({ id: survey_id });
       if (!survey) {
-        return res.status(400).json({ error: 'Survey does not exists!' });
+        throw new AppError('Survey does not exists!', 400);
       }
+
+      const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
+
+
+      const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
+        // where: [{ user_id: user.id }, { value: null } ], // Se já houver uma pesquisa OU que o valor for null
+        where: { user_id: user.id,  value: null }, // Se já houver uma pesquisa E que o valor for null
+        relations: ['user', 'survey']
+      });
 
       // Variáveis que serão passadas para o template
       const variables = {
@@ -37,16 +47,11 @@ export class SendEmailController {
         title: survey.title,
         description: survey.description,
         href: `${process.env.BASE_URL}/answers`,
-        user_id: user.id,
+        id: '',
       }
-      const npsPath = resolve(__dirname, '..', 'views', 'emails', 'npsMail.hbs');
 
-      // Se já houver uma pesquisa e que o valor for null
-      const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
-        where: [{ user_id: user.id }, { value: null } ],
-        relations: ['user', 'survey']
-      });
       if (surveyUserAlreadyExists && survey.title) {
+        variables.id = surveyUserAlreadyExists.id;
         SendEmailService.execute(email, survey.title, variables, npsPath);
         return res.status(200).json(surveyUserAlreadyExists);
       }
@@ -59,14 +64,15 @@ export class SendEmailController {
       await surveysUsersRepository.save(newSurveryUser);
 
       // Send email
-      if (survey.title && survey.description) {
+      if (survey.title && survey.description && survey.id) {
+        variables.id = survey.id;
         SendEmailService.execute(email, survey.title, variables, npsPath)
       }
 
       return res.status(201).json(newSurveryUser);
 
     } catch(err) {
-      return res.status(500).json({ error: 'Internal server error!' })
+      throw new AppError('Internal server error!', 500);
     }
   }
 }

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { getCustomRepository } from "typeorm";
+import * as yup from 'yup';
+import { ValidationError } from 'yup';
 
 import { User } from "../models/User";
 import UsersRepository from "../repositories/UsersRepository";
@@ -10,11 +12,33 @@ class UserController {
    */
   async create(req: Request, res: Response ) {
 
-    // Repositório para permitir manipulação dentro do banco de dados
-    const userRepository = getCustomRepository(UsersRepository);
-
     // Desestruturando os dados.
     const { name, email }: User = req.body;
+
+    // Validando os dados
+    const schema = yup.object().shape({
+      name: yup.string().required(),
+      email: yup.string().email().required()
+    })
+    // if (!await schema.isValid(req.body)) {
+    //   return res.status(400).json({
+    //     error: 'Validation Errors'
+    //   });
+    // }
+    try {
+      await schema.validate(req.body, { abortEarly: false });
+
+    } catch(err) {
+      if (err instanceof ValidationError) {
+        return res.status(400).json({
+          error: err.errors
+        })
+      }
+    }
+
+
+    // Repositório para permitir manipulação dentro do banco de dados
+    const userRepository = getCustomRepository(UsersRepository);
 
     // Caso o usuário já exista
     const userAlreadyExists = await userRepository.findOne({
